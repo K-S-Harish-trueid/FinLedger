@@ -3,6 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { UpdateGate } from '@/components/UpdateGate';
 import { FinLedgerProvider, useFinLedger } from '@/lib/store';
 import { palette } from '@/lib/theme';
 
@@ -31,6 +32,7 @@ export default function RootLayout(): React.JSX.Element {
       <FinLedgerProvider>
         <StatusBar style="dark" />
         <RootNavigator />
+        <UpdateGate />
       </FinLedgerProvider>
     </SafeAreaProvider>
   );
