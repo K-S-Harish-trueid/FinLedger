@@ -13,6 +13,25 @@ budget.
   saved by choosing cheaper  −  spent on things not worth it  =  net gain
 ```
 
+## Get the app
+
+There is no Play Store build. The APK lives on GitHub Releases, and once
+installed the app updates itself from the same place.
+
+<a href="https://github.com/K-S-Harish-trueid/FinLedger/releases/latest">
+  <img src="docs/download-qr.png" alt="Scan to download the latest FinLedger APK" width="200">
+</a>
+
+Scan that with your phone's camera, or
+**[download the latest APK](https://github.com/K-S-Harish-trueid/FinLedger/releases/latest)**
+directly. The code resolves to whatever the newest release is, so it never goes
+stale and never needs regenerating.
+
+On the first install Android asks you to allow "install unknown apps" for
+whichever app handed over the file — expected for anything that does not come
+from a store. After that FinLedger checks for a newer build on launch and offers
+it as an in-place update, so your data and session survive.
+
 ## The app
 
 Five tabs, built for logging things in seconds while you are standing at a bus stop.
