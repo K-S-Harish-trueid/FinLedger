@@ -13,6 +13,9 @@ export const config = {
   accessTokenTtlSeconds: Number(process.env.ACCESS_TOKEN_TTL ?? 60 * 15),
   refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS ?? 60),
   appName: 'FinLedger',
+  // Lets an external scheduler trigger the month-end run on hosts that sleep
+  // idle services. Unset means the endpoint stays disabled.
+  cronSecret: process.env.CRON_SECRET,
   defaultCurrency: process.env.DEFAULT_CURRENCY ?? 'INR',
   smtp: {
     host: process.env.SMTP_HOST,

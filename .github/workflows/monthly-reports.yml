@@ -1,0 +1,29 @@
+name: Monthly reports
+
+# A free web host sleeps idle services, so the server's own hourly timer cannot
+# be trusted to fire at month end. This nudges it daily instead; the endpoint is
+# idempotent, so only the first call after a month closes actually sends mail.
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger due monthly statements
+        env:
+          API_URL: ${{ secrets.FINLEDGER_API_URL }}
+          CRON_SECRET: ${{ secrets.FINLEDGER_CRON_SECRET }}
+        run: |
+          if [ -z "$API_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "FINLEDGER_API_URL or FINLEDGER_CRON_SECRET is not set; skipping."
+            exit 0
+          fi
+          # A sleeping free instance needs a moment to wake before it answers.
+          curl -sS --max-time 120 --retry 3 --retry-delay 20 --retry-all-errors \
+            -X POST "$API_URL/api/cron/monthly-reports" \
+            -H "x-cron-secret: $CRON_SECRET" \
+            -w '\nHTTP %{http_code}\n' \
+            --fail-with-body
