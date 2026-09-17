@@ -1,4 +1,6 @@
-export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000';
+// Defaults to the deployed API so Expo Go works with no setup. Point at a local
+// server with EXPO_PUBLIC_API_URL=http://localhost:4000 when working on the API.
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://finledger-api-lvae.onrender.com';
 
 export class ApiError extends Error {
   constructor(

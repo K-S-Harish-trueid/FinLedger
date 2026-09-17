@@ -130,15 +130,21 @@ repos and has a free monthly allowance for private ones.
 
 ## Step 5 — the phone app
 
-Point the app at your API and start it:
+The app already points at the deployed API, so this is all it takes:
 
 ```bash
 cd mobile
-EXPO_PUBLIC_API_URL=https://your-app.onrender.com npx expo start
+npx expo start
 ```
 
 Scan the QR code with **Expo Go** (free, on the App Store and Play Store). That is
 enough to use FinLedger on your own phone every day.
+
+If you deploy your own API somewhere else, override the address:
+
+```bash
+EXPO_PUBLIC_API_URL=https://your-app.onrender.com npx expo start
+```
 
 To get an installable Android APK you can share, use EAS Build's free tier:
 

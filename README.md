@@ -63,7 +63,13 @@ npx expo start
 ```
 
 Press `w` for the browser, or scan the QR code with **Expo Go** on your phone.
-The app defaults to `http://localhost:4000`; override with `EXPO_PUBLIC_API_URL`.
+
+The app talks to the deployed API by default, so Expo Go works with no setup. To
+develop against the server you just started, point it at your machine:
+
+```bash
+EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo start
+```
 
 Without SMTP configured the server logs emails instead of sending them, so the
 whole thing runs with zero configuration while you are developing.
