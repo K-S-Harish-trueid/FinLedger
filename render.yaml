@@ -1,0 +1,38 @@
+# Render Blueprint. Point Render at this repo (New -> Blueprint) and it creates
+# the service with these settings, prompting only for the secrets below.
+services:
+  - type: web
+    name: finledger-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      # `npm start` runs TypeScript directly via node's type stripping, which
+      # needs 22.6+. Without this Render may pick an older default and fail.
+      - key: NODE_VERSION
+        value: "22"
+      # sync: false means Render asks you for the value and never stores it in
+      # this repo. Fill these in the dashboard when prompted.
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_AUTH_TOKEN
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      # Email is optional. Leave these unset and the server logs statements
+      # instead of sending them; add real SMTP credentials whenever you want.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        value: FinLedger <no-reply@finledger.app>
