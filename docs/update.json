@@ -4,6 +4,9 @@
   "downloadUrl": "https://github.com/K-S-Harish-trueid/FinLedger/releases/download/v1.0.0/FinLedger-v1.0.0.apk",
   "forceUpdate": false,
   "releaseNotes": [
-    "First release"
-  ]
+    "First release",
+    "Log what you saved and what was not worth it",
+    "Offline-first, syncs when you reconnect"
+  ],
+  "sha256": "b4a196662ceb4cccfa807ea662dc06acc17a045862d908439820ed4226c61bbd"
 }

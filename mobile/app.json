@@ -39,7 +39,8 @@
         }
       ],
       "expo-secure-store",
-      "./plugins/withReleaseSigning"
+      "./plugins/withReleaseSigning",
+      "./plugins/withArm64Only"
     ],
     "experiments": {
       "typedRoutes": true,
