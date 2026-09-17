@@ -172,5 +172,39 @@ export const authRouter = (db: DB): Router => {
     res.status(204).end();
   });
 
+  /**
+   * Deletes the account and everything in it. Rows are removed explicitly
+   * rather than relying on ON DELETE CASCADE: `PRAGMA foreign_keys` is
+   * per-connection, and a hosted database hands out a different connection per
+   * request, so the cascade cannot be assumed to be on.
+   */
+  router.delete('/me', requireAuth, async (req, res: Response) => {
+    const { userId } = req;
+    const parsed = z.object({ password: z.string() }).safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: 'password_required' });
+      return;
+    }
+    const user = await get<UserRow>(db, `SELECT * FROM users WHERE id = ?`, [userId]);
+    if (!user || !(await verifyPassword(parsed.data.password, user.password_hash))) {
+      res.status(401).json({ error: 'invalid_credentials' });
+      return;
+    }
+    await db.batch(
+      [
+        'transactions',
+        'savings',
+        'budgets',
+        'investments',
+        'categories',
+        'devices',
+        'sent_reports',
+      ].map((table) => ({ sql: `DELETE FROM ${table} WHERE user_id = ?`, args: [userId] }))
+        .concat([{ sql: `DELETE FROM users WHERE id = ?`, args: [userId] }]),
+      'write',
+    );
+    res.status(204).end();
+  });
+
   return router;
 };

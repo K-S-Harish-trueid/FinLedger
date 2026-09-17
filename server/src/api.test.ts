@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 import type { Server } from 'node:http';
 import { createApp } from './app.ts';
-import { openDb, type DB } from './db.ts';
+import { all, openDb, type DB } from './db.ts';
 import { formatInr, rupeesToPaise } from './money.ts';
 import { buildMonthlyReport, monthRange, previousMonth, savingStreak } from './reports.ts';
 import { renderMonthlyEmail } from './mailer.ts';
@@ -98,6 +98,37 @@ describe('auth', () => {
   it('refuses requests without a token', async () => {
     const { status } = await api('/api/transactions');
     assert.equal(status, 401);
+  });
+
+  it('deletes an account and everything in it, but only with the password', async () => {
+    const user = await register('delete-me@example.com');
+    const token = user.accessToken;
+    await api('/api/savings', {
+      method: 'POST',
+      token,
+      body: { title: 'Goes away', amount: rupeesToPaise(10), occurredOn: '2026-09-04' },
+    });
+
+    const wrong = await api('/api/auth/me', { method: 'DELETE', token, body: { password: 'nope' } });
+    assert.equal(wrong.status, 401);
+
+    const removed = await api('/api/auth/me', {
+      method: 'DELETE',
+      token,
+      body: { password: 'supersecret123' },
+    });
+    assert.equal(removed.status, 204);
+
+    // The account is gone, and so is the row that belonged to it.
+    const login = await api('/api/auth/login', {
+      method: 'POST',
+      body: { email: 'delete-me@example.com', password: 'supersecret123' },
+    });
+    assert.equal(login.status, 401);
+    const orphans = await all<{ n: number }>(db, `SELECT COUNT(*) AS n FROM savings WHERE user_id = ?`, [
+      user.user.id,
+    ]);
+    assert.equal(orphans[0]?.n, 0);
   });
 
   it('rotates the refresh token and keeps devices independent', async () => {
