@@ -40,6 +40,13 @@ way forward is to uninstall, which deletes their local data.
   back it up somewhere you will not lose it. A lost keystore means no existing
   install can ever be updated again.
 
+`expo prebuild` regenerates `android/` from scratch and its template signs
+release builds with the **debug** key — which would break every existing
+install. `mobile/plugins/withReleaseSigning.js` re-injects a real release
+signing config on every prebuild, fed by four Gradle properties, so the keystore
+never enters the repo. With those properties absent the build falls back to
+debug signing, so a throwaway build still works without the release keystore.
+
 App data is untouched by an update: it lives in the app's own storage and
 survives an in-place install.
 
@@ -74,13 +81,27 @@ eas build -p android --profile production
 
 Download the artifact and rename it to `FinLedger-v1.1.0.apk`.
 
-Building locally instead:
+Building locally instead, with the release keystore:
 
 ```bash
 cd mobile
 npx expo prebuild -p android
-cd android && ./gradlew assembleRelease
+cd android
+gradle assembleRelease \
+  -PFINLEDGER_KEYSTORE=$HOME/keystores/finledger-release.jks \
+  -PFINLEDGER_KEYSTORE_PASSWORD=... \
+  -PFINLEDGER_KEY_ALIAS=finledger \
+  -PFINLEDGER_KEY_PASSWORD=...
 # app/build/outputs/apk/release/app-release.apk
+```
+
+Put the four values in `~/.gradle/gradle.properties` instead and they are
+picked up automatically, with no secrets on the command line.
+
+Confirm what actually signed the APK before publishing it:
+
+```bash
+apksigner verify --print-certs app-release.apk   # SHA-256 must match every past release
 ```
 
 ## 3. Create the GitHub Release

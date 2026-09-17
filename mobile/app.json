@@ -13,7 +13,9 @@
     "android": {
       "package": "in.trueid.finledger",
       "versionCode": 1,
-      "permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
+      "permissions": [
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -36,7 +38,8 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "./plugins/withReleaseSigning"
     ],
     "experiments": {
       "typedRoutes": true,
